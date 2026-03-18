@@ -1,0 +1,46 @@
+
+.idea/
+.vscode/
+
+# Node modules
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Vite cache
+.vite/
+.cache/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Misc
+.sass-cache/
+.parcel-cache/
+.turbo/
+.eslintcache
+*.tgz
+
+# Ignore local secrets and keys
+*.pem
+*.key

@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body, #root {
+    height: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+
+  body {
+    background-color: #0f172a;
+    color: #f1f5f9;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 9999px;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl;
+  }
+
+  .btn-primary {
+    @apply bg-brand-500 hover:bg-brand-400 text-white font-semibold py-2.5 px-5 rounded-xl
+           transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2
+           focus:ring-brand-400 focus:ring-offset-2 focus:ring-offset-slate-900
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-ghost {
+    @apply bg-white/10 hover:bg-white/20 text-white font-medium py-2.5 px-5 rounded-xl
+           transition-all duration-200 active:scale-95;
+  }
+
+  .input-field {
+    @apply w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white
+           placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-brand-500
+           focus:border-transparent transition-all duration-200;
+  }
+
+  .message-bubble-own {
+    @apply bg-brand-600 text-white rounded-2xl rounded-br-sm px-4 py-2.5 max-w-xs
+           sm:max-w-sm md:max-w-md shadow-lg;
+  }
+
+  .message-bubble-other {
+    @apply bg-slate-700 text-slate-100 rounded-2xl rounded-bl-sm px-4 py-2.5 max-w-xs
+           sm:max-w-sm md:max-w-md shadow-lg;
+  }
+}
