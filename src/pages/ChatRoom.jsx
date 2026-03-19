@@ -42,6 +42,8 @@ const ChatRoom = () => {
   useEffect(() => {
     if (!token) return
 
+    // Ensure socket auth contains current token before connecting
+    socket.auth = { token }
     socket.connect()
     socket.emit('join-room', { roomId, token })
 

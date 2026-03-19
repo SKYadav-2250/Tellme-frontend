@@ -1,11 +1,9 @@
 import { io } from 'socket.io-client'
+import { SOCKET_BASE_URL } from '../runtimeConfig'
 
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'
-
-// Singleton socket — created once, reused across the app
-const socket = io(SOCKET_URL, {
-  autoConnect: false,  // We connect manually when joining a room
-  transports: ['websocket'],
+const socket = io(SOCKET_BASE_URL, {
+  autoConnect: false,
+  transports: ['websocket', 'polling'],
 })
 
 export default socket

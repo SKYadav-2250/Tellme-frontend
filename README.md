@@ -19,7 +19,19 @@ npm install
 
 ## Environment
 
-Create a `.env` file in the project root to store any environment overrides. The frontend expects the backend API URL to be configured in the app (or via `import.meta.env`).
+Create a `.env` file in the project root if you want to override the backend URLs locally.
+
+Example:
+
+```env
+VITE_API_URL=http://localhost:5000
+VITE_SOCKET_URL=http://localhost:5000
+```
+
+Production fallback:
+
+- If `VITE_API_URL` is not set, the app falls back to `https://tell-me-backend.onrender.com`.
+- If `VITE_SOCKET_URL` is not set, Socket.IO uses the same value as `VITE_API_URL`.
 
 ## Scripts
 
@@ -49,7 +61,16 @@ npm run preview
 - `src/pages/` — route pages
 - `src/socket/` — Socket.IO client setup
 
+## Deployment
+
+- Frontend production URL: `https://tellme-frontend.vercel.app`
+- Backend production URL: `https://tell-me-backend.onrender.com`
+- On Vercel, add:
+  - `VITE_API_URL=https://tell-me-backend.onrender.com`
+  - `VITE_SOCKET_URL=https://tell-me-backend.onrender.com`
+
 ## Notes
 
-- API URL can be set via environment variables used by Vite (`VITE_API_URL`).
+- Auth uses REST requests to `/api/auth/*`.
+- Real-time room chat uses Socket.IO on the backend base URL.
 - `.env` files are ignored by `.gitignore`.
