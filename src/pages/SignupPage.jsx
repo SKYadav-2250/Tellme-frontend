@@ -20,7 +20,9 @@ const SignupPage = () => {
   const location = useLocation()
   const { login } = useAuth()
 
+  const [step, setStep] = useState(1)
   const [form, setForm] = useState({ name: '', email: '', password: '', about: '' })
+  const [otp, setOtp] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showPass, setShowPass] = useState(false)
@@ -32,7 +34,7 @@ const SignupPage = () => {
     setError('')
   }
 
-  const handleSubmit = async (e) => {
+  const handleSignupSubmit = async (e) => {
     e.preventDefault()
     if (!form.name || !form.email || !form.password) {
       setError('Name, email, and password are required')
@@ -44,11 +46,29 @@ const SignupPage = () => {
     }
     setLoading(true)
     try {
-      const { data } = await axios.post('/api/auth/signup', form)
+      await axios.post('/api/auth/signup', form)
+      setStep(2)
+      setError('')
+    } catch (err) {
+      setError(err.response?.data?.message || 'Signup failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleOtpSubmit = async (e) => {
+    e.preventDefault()
+    if (!otp) {
+      setError('OTP is required')
+      return
+    }
+    setLoading(true)
+    try {
+      const { data } = await axios.post('/api/auth/verify-otp', { email: form.email, otp })
       login(data.user, data.token)
       navigate(redirect, { replace: true })
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed. Please try again.')
+      setError(err.response?.data?.message || 'Verification failed. Please check your OTP.')
     } finally {
       setLoading(false)
     }
@@ -69,8 +89,12 @@ const SignupPage = () => {
                 d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <h1 className="text-3xl font-bold text-white">Create account</h1>
-          <p className="text-slate-400 mt-1">Join TellMe today</p>
+          <h1 className="text-3xl font-bold text-white">
+            {step === 1 ? 'Create account' : 'Verify Email'}
+          </h1>
+          <p className="text-slate-400 mt-1">
+            {step === 1 ? 'Join TellMe today' : `Enter the OTP sent to ${form.email}`}
+          </p>
         </div>
 
         <div className="glass-card p-8">
@@ -80,95 +104,142 @@ const SignupPage = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
-              <input
-                type="text"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                placeholder="Alice Johnson"
-                className="input-field"
-                autoComplete="name"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
-              <input
-                type="email"
-                name="email"
-                value={form.email}
-                onChange={handleChange}
-                placeholder="you@example.com"
-                className="input-field"
-                autoComplete="email"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
-              <div className="relative">
+          {step === 1 ? (
+            <form onSubmit={handleSignupSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Full Name</label>
                 <input
-                  type={showPass ? 'text' : 'password'}
-                  name="password"
-                  value={form.password}
+                  type="text"
+                  name="name"
+                  value={form.name}
                   onChange={handleChange}
-                  placeholder="Min. 6 characters"
-                  className="input-field pr-11"
-                  autoComplete="new-password"
+                  placeholder="Alice Johnson"
+                  className="input-field"
+                  autoComplete="name"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPass(v => !v)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none"
-                >
-                  <EyeIcon open={showPass} />
-                </button>
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-slate-300 mb-1.5">
-                About <span className="text-slate-500 text-xs">(optional)</span>
-              </label>
-              <input
-                type="text"
-                name="about"
-                value={form.about}
-                onChange={handleChange}
-                placeholder="Hey there! I'm using TellMe."
-                className="input-field"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="you@example.com"
+                  className="input-field"
+                  autoComplete="email"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full mt-2 flex items-center justify-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
-                  </svg>
-                  Creating account…
-                </>
-              ) : 'Create Account'}
-            </button>
-          </form>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Password</label>
+                <div className="relative">
+                  <input
+                    type={showPass ? 'text' : 'password'}
+                    name="password"
+                    value={form.password}
+                    onChange={handleChange}
+                    placeholder="Min. 6 characters"
+                    className="input-field pr-11"
+                    autoComplete="new-password"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPass(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none"
+                  >
+                    <EyeIcon open={showPass} />
+                  </button>
+                </div>
+              </div>
 
-          <p className="mt-5 text-center text-slate-400 text-sm">
-            Already have an account?{' '}
-            <Link
-              to={`/login?redirect=${encodeURIComponent(redirect)}`}
-              className="text-brand-400 hover:text-brand-300 font-medium transition-colors"
-            >
-              Sign in
-            </Link>
-          </p>
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">
+                  About <span className="text-slate-500 text-xs">(optional)</span>
+                </label>
+                <input
+                  type="text"
+                  name="about"
+                  value={form.about}
+                  onChange={handleChange}
+                  placeholder="Hey there! I'm using TellMe."
+                  className="input-field"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full mt-2 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Sending OTP…
+                  </>
+                ) : 'Continue'}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleOtpSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-1.5">Enter OTP</label>
+                <input
+                  type="text"
+                  name="otp"
+                  value={otp}
+                  onChange={(e) => {
+                    setOtp(e.target.value)
+                    setError('')
+                  }}
+                  placeholder="123456"
+                  className="input-field tracking-widest text-center text-lg font-mono"
+                  autoComplete="off"
+                  maxLength={6}
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary w-full mt-2 flex items-center justify-center gap-2"
+              >
+                {loading ? (
+                  <>
+                    <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
+                    </svg>
+                    Verifying…
+                  </>
+                ) : 'Verify & Create Account'}
+              </button>
+              
+              <button
+                type="button"
+                onClick={() => setStep(1)}
+                className="w-full mt-3 text-sm text-slate-400 hover:text-white transition-colors"
+              >
+                Go back
+              </button>
+            </form>
+          )}
+
+          {step === 1 && (
+            <p className="mt-5 text-center text-slate-400 text-sm">
+              Already have an account?{' '}
+              <Link
+                to={`/login?redirect=${encodeURIComponent(redirect)}`}
+                className="text-brand-400 hover:text-brand-300 font-medium transition-colors"
+              >
+                Sign in
+              </Link>
+            </p>
+          )}
         </div>
       </div>
     </div>
