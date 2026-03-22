@@ -64,7 +64,7 @@ const SignupPage = () => {
     }
     setLoading(true)
     try {
-      const { data } = await axios.post('/api/auth/verify-otp', { email: form.email, otp })
+      const { data } = await axios.post('/api/auth/verify-otp', { ...form, otp })
       login(data.user, data.token)
       navigate(redirect, { replace: true })
     } catch (err) {
