@@ -72,7 +72,7 @@ const Dashboard = () => {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <span className="text-slate-400 text-sm hidden sm:block">
+              <span className="text-slate-400 text-sm  sm:block">
                 Hi, <span className="text-white font-medium">{user?.name}</span>
               </span>
               <button
@@ -158,11 +158,10 @@ const Dashboard = () => {
                   <p className="flex-1 text-sm text-slate-300 truncate font-mono">{roomLink}</p>
                   <button
                     onClick={copyLink}
-                    className={`shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${
-                      copied
-                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                        : 'bg-brand-500/20 text-brand-400 border border-brand-500/30 hover:bg-brand-500/30'
-                    }`}
+                    className={`shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200 ${copied
+                      ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                      : 'bg-brand-500/20 text-brand-400 border border-brand-500/30 hover:bg-brand-500/30'
+                      }`}
                   >
                     {copied ? '✓ Copied' : 'Copy'}
                   </button>
