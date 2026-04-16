@@ -155,19 +155,7 @@ const ChatRoom = () => {
 
     const encryptedText = encryptMessage(trimmed, roomId)
     const timestamp = new Date().toISOString()
-    
-    // Optimistic update - add message immediately
-    const optimisticMessage = {
-      id: `${user?.id}-${timestamp}`,
-      senderId: user?.id,
-      senderName: user?.name || 'You',
-      encryptedText,
-      text: trimmed,
-      type: 'text',
-      timestamp,
-    }
-    appendUniqueMessage(optimisticMessage)
-    
+
     socket.emit('send-message', {
       roomId,
       encryptedText,
@@ -191,17 +179,7 @@ const ChatRoom = () => {
     const reader = new FileReader()
     reader.onload = () => {
       const timestamp = new Date().toISOString()
-      // Optimistic update for image
-      const optimisticMessage = {
-        id: `${user?.id}-${timestamp}`,
-        senderId: user?.id,
-        senderName: user?.name || 'You',
-        imageData: reader.result,
-        type: 'image',
-        timestamp,
-      }
-      appendUniqueMessage(optimisticMessage)
-      
+
       socket.emit('send-message', {
         roomId,
         imageData: reader.result,
