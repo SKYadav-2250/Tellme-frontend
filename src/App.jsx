@@ -18,9 +18,9 @@ function App() {
         <Route
           path="/room/:roomId"
           element={
-            <ProtectedRoute>
+            // <ProtectedRoute>
               <ChatRoom />
-            </ProtectedRoute>
+            // </ProtectedRoute>
           }
         />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
